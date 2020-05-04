@@ -1,6 +1,8 @@
+https://www.ibm.com/developerworks/br/library/l-inotify/index.html
+https://www.monolitonimbus.com.br/monitorando-arquivos-com-inotify/
 https://www.youtube.com/watch?v=jHS1puUb7Ic
 
-SUMARIO
+##SUMARIO
 
 -CONCEITO DE INODE
 
@@ -19,3 +21,81 @@ SUMARIO
 -OUTRAS IMPLEMENTACOES DO INOTIFY
 
 -CONCLUSAO
+
+###### INODES FAZEM PARTE DA AREA DE CONTROLE DOS FILESYSTEM
+###### INOTIFY (INODE NOTIFY) = MONITOR DE EVENTOS DO FILESYSTEM
+
+
+
+
+#TIPOS DE EVENTOS
+
+## (+) OCORRE APENAS UM OBJETOS DENTRO DE DIRETORIOS
+## (*) PODE OCORRER NO DIRETORIO OU EM OBJETOS DENTRO DELE.	
+
+1) -IN_ACESS (+): arq/dir foi acessado.
+
+2) -IN_ATRIB (*): metadado foi alterado.
+
+3) -IN_CLOSE_WRITE (*): arq/dir foi fechado e houve alteracao.
+ 
+4) -IN_NOWRITE (+): arq/dir foi fechado e nao houve alteracao.
+
+5) -IN_CREATE (+): arq/dir criado em diretorio observado.
+
+6) -IN_DELETE (+): arq/dir deletado em diretorio observado.
+
+7) -IN_DELETE_ITSELF : arq/dir observado foi deletado.
+
+8) -IN_MODIFY (+): arq/dir teve conteudo modificado.
+
+9) -IN_MOVE_SELF: arq/dir observado diretamente foi removido.
+
+10) -IN_MOVED_FROM (+): arq/dir em diretorio observado foi renomeado. Sera mostrado nome inicial.
+
+11) -IN_MOVED_TO (+): arq/dir em diretorio observado foi renomeado. Sera mostrado nome final.
+
+12) -IN_OPEN (+): arq/dir foi aberto.
+
+## MACROS
+
+13) IN_ALL_EVENTS: todos eventos mostrados anteriormente
+
+14) IN_MOVE: engloba IN_MOVED_FROM e IN_MOVED_TO
+
+15) IN_CLOSE: engloba IN_CLOSE_WRITE e IN_CLOSE_NOWRITE
+
+## ESPECIAIS
+
+16) IN_IGNORED: o evento esta ocorrendo em um objeto mas devera ser ignorado
+
+17) IN_ISDIR: o evento esta ocorrendo em um diretorio
+
+
+
+## EVENTOS IWATCH
+	DEFAULT: close_write	create 	 delete	   move    delete_self    e    move_self
+
+	all_events: todos eventos
+
+
+$iwatch -r-c(w;ps aux) /bin | mail -s '%f foi alterado' admin@foo.bar    ### monitorar /bin recursivamente com eventos default. Caso um evento ocorra, enviar um e-mail para o admin@foo.bar com o resultado do comando 'w' e 'ps aux' no corpo. O assunto do email sera 'nome_do_arquivo' foi alterado
+
+
+$iwatch -e all_events /tmp/1
+
+ 
+
+######## IWATCH COMO DAEMON /etc/iwatch/iwatch.xml
+
+<?xml version="1.0"?>
+<!DOCTYPE config SYSTEM "/etc/iwatch/iwatch.dtd">
+
+<config>
+<guard email="root@example.com">name="iWatch"/>
+<watchlist>
+	<title>Monitora alteracoes em /etc/shadow/<title>
+	<contactpoint email>"someone@example.com" name="Admin/">
+	<path type="single">/etc/shadows</path>
+</watchlist>
+</config>	
